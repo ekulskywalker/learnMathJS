@@ -77,7 +77,17 @@ jQuery(function ($) {
         },
         setLearnMathQuestion: function (questionObject) {
             var localObject = {};
+            localObject.history = this.getLearnMathHistory();
             localObject.question = questionObject;
+            this.setLearnMathObjectToLS(localObject);
+        },
+        getLearnMathHistory: function() {
+            return this.getLearnMathObjectFromLS() ? this.getLearnMathObjectFromLS().history : null;
+        },
+        addLearnMathHistory: function(historyObject) {
+            var localObject = {};
+            localObject.question = this.getLearnMathQuestion();
+            localObject.history = historyObject;
             this.setLearnMathObjectToLS(localObject);
         },
     };
@@ -112,15 +122,18 @@ jQuery(function ($) {
         question: function () {
             var questionObject = equationObject.getQuestionObject();
             view.displayQuestion(questionObject);
+            this.history();
         },
         answer: function (answerInput) {
             var questionObject = equationObject.checkAnswer(answerInput);
             view.displayResponse(questionObject);
+            learnMathHistory.addQuestionToHistory(questionObject);
             this.nextQuestion();
         },
         nextQuestion: function () {
             var questionObject = equationObject.createQuestion();
             view.displayQuestion(questionObject);
+            this.history();
         },
         changeMathOperation: function (mathOperation) {
             equationObject.setMathOperation(mathOperation);
@@ -130,12 +143,31 @@ jQuery(function ($) {
             localStorage.clear();
             console.log('History cleared...');
         },
+        history: function() {
+            var historyObject = learnMathHistory.getHistoryObject();
+            view.displayHistory(historyObject);
+        },
     }
+
+    var learnMathHistory = {
+        init: function() {
+            this.getHistoryObject();
+        },
+        addQuestionToHistory: function(questionObject) {
+            historyObject = this.getHistoryObject();
+            historyObject.push(questionObject);
+            LS_util.addLearnMathHistory(historyObject);
+        },
+        getHistoryObject: function() {
+            return LS_util.getLearnMathHistory() || [];
+        },
+    };
 
     var App = {
         init: function () {
             equationObject.init();
             handler.question();
+            learnMathHistory.init();
         },
     };
 
