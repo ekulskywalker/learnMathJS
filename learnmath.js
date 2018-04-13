@@ -137,7 +137,7 @@ jQuery(function ($) {
             $("#history").html('');
             i = historyObject.length;
             while(i--){
-                var symbol = numberObject.getMathOperationSymbol(historyObject[i].mathOperation);
+                var symbol = equationObject.getMathOperationSymbol(historyObject[i].mathOperation);
                 var mathOperation = historyObject[i].mathOperation;
                 correctAnswer = arithmatic[mathOperation](historyObject[i].lowNum,historyObject[i].highNum);
                 var isCorrect = (correctAnswer === historyObject[i].userAnswer) ? 'Correct' : 'Incorrect';
@@ -179,6 +179,7 @@ jQuery(function ($) {
         history: function() {
             var historyObject = learnMathHistory.getHistoryObject();
             view.displayHistory(historyObject);
+            viewHTML.displayHistory(historyObject);
         },
     }
 
