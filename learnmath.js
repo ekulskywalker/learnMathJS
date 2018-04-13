@@ -63,7 +63,7 @@ jQuery(function ($) {
             return a / b;
         }
     };
-
+    
 
     var LS_util = {
         setLearnMathObjectToLS: function (data) {
@@ -107,20 +107,53 @@ jQuery(function ($) {
             }
         },
     };
+    var viewHTML = {
+        displayQuestion: function(questionObject) {
+            symbol = equationObject.getMathOperationSymbol(questionObject.mathOperation);
+            displayQuestionHTML = `Question: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = `;
+            $("#displayQuestion").html(displayQuestionHTML);
+        },
+        displayResponse: function(questionObject) {
+            symbol = equationObject.getMathOperationSymbol(questionObject.mathOperation);
+            correctAnswer = arithmatic[questionObject.mathOperation](questionObject.lowNum,questionObject.highNum);
+            if (correctAnswer === questionObject.userAnswer) {
+                var displayResponseHTML = `Correct: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = ${correctAnswer}`;
+            } else {
+                var displayResponseHTML = `Incorrect: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = ${correctAnswer}. You put ${questionObject.userAnswer}`;
+            }
+            $("#response").html(displayResponseHTML);
+        },
+        displayHistory: function(historyObject) {
+            $("#history").html('');
+            i = historyObject.length;
+            while(i--){
+                var symbol = numberObject.getMathOperationSymbol(historyObject[i].mathOperation);
+                var mathOperation = historyObject[i].mathOperation;
+                correctAnswer = arithmatic[mathOperation](historyObject[i].lowNum,historyObject[i].highNum);
+                var isCorrect = (correctAnswer === historyObject[i].userAnswer) ? 'Correct' : 'Incorrect';
+                var oneQuestion = `${i}: ${isCorrect} - ${historyObject[i].lowNum} ${symbol} ${historyObject[i].highNum} = ${correctAnswer} ... You answered: ${historyObject[i].userAnswer}`;
+                var oneItem = $('<li></li>').text(oneQuestion);
+                $("#history").append(oneItem);
+            }
+        },
+    };
 
     var h = handler = {
         question: function () {
             var questionObject = equationObject.getQuestionObject();
             view.displayQuestion(questionObject);
+            viewHTML.displayQuestion(questionObject);
         },
         answer: function (answerInput) {
             var questionObject = equationObject.checkAnswer(answerInput);
             view.displayResponse(questionObject);
+            viewHTML.displayResponse(questionObject);
             this.nextQuestion();
         },
         nextQuestion: function () {
             var questionObject = equationObject.createQuestion();
             view.displayQuestion(questionObject);
+            viewHTML.displayQuestion(questionObject);
         },
         changeMathOperation: function (mathOperation) {
             equationObject.setMathOperation(mathOperation);
@@ -136,6 +169,19 @@ jQuery(function ($) {
         init: function () {
             equationObject.init();
             handler.question();
+            $("#answer").on("keyup", this.submitme.bind(this));
+            $("#submit").click(function(){
+                var userAnswer = parseInt($("#answer").val());
+                handler.answer(userAnswer);
+                $("#answer").val('').focus();
+            });
+        },
+        submitme: function(e) {
+            if (e.which === 13) {
+                var userAnswer = parseInt($("#answer").val());
+                handler.answer(userAnswer);
+                $("#answer").val('').focus();
+            }
         },
     };
 
