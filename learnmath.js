@@ -146,6 +146,7 @@ jQuery(function ($) {
         history: function() {
             var historyObject = learnMathHistory.getHistoryObject();
             view.displayHistory(historyObject);
+            viewHTML.displayHistory(historyObject);
         },
     }
 
