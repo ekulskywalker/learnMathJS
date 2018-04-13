@@ -169,18 +169,20 @@ jQuery(function ($) {
         init: function () {
             equationObject.init();
             handler.question();
-            $("#answer").on("keyup", this.submitme.bind(this));
+            $("#inputAnswer").on("keyup", this.submitme.bind(this));
             $("#submit").click(function(){
-                var userAnswer = parseInt($("#answer").val());
+                var $inputAnswer = $("#inputAnswer");
+                var userAnswer = parseInt($inputAnswer.val());
                 handler.answer(userAnswer);
-                $("#answer").val('').focus();
+                $inputAnswer.val('').focus();
             });
         },
         submitme: function(e) {
             if (e.which === 13) {
-                var userAnswer = parseInt($("#answer").val());
+                var $inputAnswer = $("#inputAnswer");
+                var userAnswer = parseInt($inputAnswer.val());
                 handler.answer(userAnswer);
-                $("#answer").val('').focus();
+                $inputAnswer.val('').focus();
             }
         },
     };
