@@ -220,6 +220,9 @@ jQuery(function ($) {
             $("#historyContainer").on("click", function(){
                 $("#history").toggle();
             });
+            $("#mathOperation").on("click", ".moSpacing", function(event){
+                handler.changeMathOperation(event.target.id);
+            });
         },
         submitme: function(e) {
             if (e.which === 13) {
