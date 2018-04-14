@@ -15,8 +15,16 @@ jQuery(function ($) {
             return this.questionObject;
         },
         createQuestion: function (mathOperation) {
-            lowNum = this.generateRandomNumber();
-            highNum = this.generateRandomNumber();
+            var highNum, lowNum;
+            var rnum1 = this.generateRandomNumber();
+            var rnum2 = this.generateRandomNumber();
+            if (rnum1 > rnum2) {
+                highNum = rnum1;
+                lowNum = rnum2;
+            } else {
+                highNum = rnum2;
+                lowNum = rnum1;
+            }
             mathOperation = this.mathOperation;
             questionObject = {
                 lowNum: lowNum,
