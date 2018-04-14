@@ -210,20 +210,14 @@ jQuery(function ($) {
             equationObject.init();
             handler.question();
             learnMathHistory.init();
-            $("#inputAnswer").on("keyup", this.submitme.bind(this));
-            $("#submit").click(function(){
-                var $inputAnswer = $("#inputAnswer");
-                var userAnswer = parseInt($inputAnswer.val());
-                handler.answer(userAnswer);
-                $inputAnswer.val('').focus();
-            });
+            $("#answerBox").on("submit", this.submitAnswer.bind(this));
         },
-        submitme: function(e) {
-            if (e.which === 13) {
-                var $inputAnswer = $("#inputAnswer");
-                var userAnswer = parseInt($inputAnswer.val());
+        submitAnswer: function(event) {
+            event.preventDefault();
+            var userAnswer = parseInt($("#inputAnswer").val());
+            if (Number.isInteger(userAnswer)) {
                 handler.answer(userAnswer);
-                $inputAnswer.val('').focus();
+                $("#inputAnswer").val('').focus();
             }
         },
     };
