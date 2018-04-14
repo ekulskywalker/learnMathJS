@@ -211,6 +211,13 @@ jQuery(function ($) {
             handler.question();
             learnMathHistory.init();
             $("#answerBox").on("submit", this.submitAnswer.bind(this));
+            $("#historyContainer").on("click", function(){
+                $("#history").toggle();
+            });
+            $("#mathOperation").on("click", ".moSpacing", function(event){
+                handler.changeMathOperation(event.target.id);
+                $("#inputAnswer").focus();
+            });
         },
         submitAnswer: function(event) {
             event.preventDefault();
