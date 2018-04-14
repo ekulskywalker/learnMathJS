@@ -217,6 +217,9 @@ jQuery(function ($) {
                 handler.answer(userAnswer);
                 $inputAnswer.val('').focus();
             });
+            $("#historyContainer").on("click", function(){
+                $("#history").toggle();
+            });
         },
         submitme: function(e) {
             if (e.which === 13) {
