@@ -222,6 +222,7 @@ jQuery(function ($) {
             });
             $("#mathOperation").on("click", ".moSpacing", function(event){
                 handler.changeMathOperation(event.target.id);
+                $("#inputAnswer").focus();
             });
         },
         submitme: function(e) {
