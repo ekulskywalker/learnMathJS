@@ -61,8 +61,16 @@ jQuery(function ($) {
             this.mathOperation = mathOperation;
         },
     };
-
+    /**
+     *  Where the actual math happens
+     */
     var arithmatic = {
+        /**
+         *  Add the two input together
+         *  @param  {Number}  a     a
+         *  @param  {Number}  b     b
+         *  @return {Number}  Answer to adding a + b
+         */
         addition: function (a, b) {
             return a + b;
         },
