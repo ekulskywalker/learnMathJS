@@ -2,18 +2,46 @@ jQuery(function ($) {
 
     const LS_NAMESPACE = 'learnMath';
 
+    /**
+     * Creates and manage the equation
+     *      questionObject = 
+     *      {
+     *          highNum         = highest Number
+     *          lowNum          = lowest Number
+     *          mathOperation   = addition (default) / subtraction / multiplication / division
+     *          userAnswer      = What the user thinks the answer is
+     *      }
+     *          
+     */
     var equationObject = {
+        /**
+         * Initiate the process of creating the equation, setting default to addition
+         * Create a new equation, if there isn't a question in localStorage
+         * Set the object
+         */ 
         init: function () {
             this.mathOperation = 'addition';
             questionObject = LS_util.getLearnMathQuestion() || this.createQuestion(this.mathOperation);
             this.setQuestionObject(questionObject); // floods the equationObject
         },
+        /**
+         * Set the question object globally inside equationObject
+         */
         setQuestionObject: function (questionObject) {
             this.questionObject = questionObject;
         },
+        /**
+         * Get the question object
+         * @return {object} questionObject
+         */
         getQuestionObject: function () {
             return this.questionObject;
         },
+        /**
+         *  Create the Math Equation
+         *  @param  {string}  mathOperation   type of equation generated
+         *  @return {string}  questionObject
+         */
         createQuestion: function (mathOperation) {
             var highNum, lowNum;
             var rnum1 = this.generateRandomNumber();
@@ -25,16 +53,28 @@ jQuery(function ($) {
                 highNum = rnum2;
                 lowNum = rnum1;
             }
-            mathOperation = this.mathOperation;
+            if (mathOperation) {
+                this.mathOperation = mathOperation;
+            }
+            
             questionObject = {
                 lowNum: lowNum,
                 highNum: highNum,
-                mathOperation: mathOperation,
+                mathOperation: this.mathOperation,
+                userAnswer: undefined,
             };
-            LS_util.setLearnMathQuestion(questionObject);
+            var correctAnswer = arithmatic[equationObject.mathOperation](highNum, lowNum)
+            if (this.mathOperation === "division" && lowNum === 0 || correctAnswer % 1 !== 0) {
+                this.createQuestion();
+            }
             this.setQuestionObject(questionObject);
+            LS_util.setLearnMathQuestion(questionObject);
             return questionObject;
         },
+        /**
+         * Generate random number
+         * @return {Number} random number
+         */
         generateRandomNumber: function () {
             return Math.floor(Math.random() * Math.pow(10, 1));
         },
@@ -56,8 +96,16 @@ jQuery(function ($) {
             this.mathOperation = mathOperation;
         },
     };
-
+    /**
+     *  Where the actual math happens
+     */
     var arithmatic = {
+        /**
+         *  Add the two input together
+         *  @param  {Number}  a     a
+         *  @param  {Number}  b     b
+         *  @return {Number}  Answer to adding a + b
+         */
         addition: function (a, b) {
             return a + b;
         },
@@ -103,41 +151,41 @@ jQuery(function ($) {
     var view = {
         displayQuestion: function (questionObject) {
             symbol = equationObject.getMathOperationSymbol(questionObject.mathOperation);
-            console.log(`Question: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = `);
+            console.log(`Question: ${questionObject.highNum} ${symbol} ${questionObject.lowNum}   = `);
         },
         displayHistory: function (historyObject) {
             i = historyObject.length;
             while (i--) {
                 var symbol = equationObject.getMathOperationSymbol(historyObject[i].mathOperation);
                 var mathOperation = historyObject[i].mathOperation;
-                correctAnswer = arithmatic[mathOperation](historyObject[i].lowNum, historyObject[i].highNum);
+                correctAnswer = arithmatic[mathOperation](historyObject[i].highNum, historyObject[i].lowNum);
                 var isCorrect = (correctAnswer === historyObject[i].userAnswer) ? 'Correct' : 'Incorrect';
-                console.log(`${i}: ${isCorrect} - ${historyObject[i].lowNum} ${symbol} ${historyObject[i].highNum} = ${correctAnswer} ... You answered: ${historyObject[i].userAnswer}`);
+                console.log(`${i}: ${isCorrect} - ${historyObject[i].highNum} ${symbol} ${historyObject[i].lowNum} = ${correctAnswer} ... You answered: ${historyObject[i].userAnswer}`);
             }
         },
         displayResponse: function (questionObject) {
             symbol = equationObject.getMathOperationSymbol(questionObject.mathOperation);
-            correctAnswer = arithmatic[questionObject.mathOperation](questionObject.lowNum, questionObject.highNum);
+            correctAnswer = arithmatic[questionObject.mathOperation](questionObject.highNum, questionObject.lowNum);
             if (correctAnswer === questionObject.userAnswer) {
-                console.log(`Correct: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = ${correctAnswer}`);
+                console.log(`Correct: ${questionObject.highNum} ${symbol} ${questionObject.lowNum} = ${correctAnswer}`);
             } else {
-                console.log(`Incorrect: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = ${correctAnswer}. You put ${questionObject.userAnswer}`);
+                console.log(`Incorrect: ${questionObject.highNum} ${symbol} ${questionObject.lowNum} = ${correctAnswer}. You put ${questionObject.userAnswer}`);
             }
         },
     };
     var viewHTML = {
         displayQuestion: function(questionObject) {
             symbol = equationObject.getMathOperationSymbol(questionObject.mathOperation);
-            displayQuestionHTML = `Question: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = `;
+            displayQuestionHTML = `Question: ${questionObject.highNum} ${symbol} ${questionObject.lowNum}   = `;
             $("#displayQuestion").html(displayQuestionHTML);
         },
         displayResponse: function(questionObject) {
             symbol = equationObject.getMathOperationSymbol(questionObject.mathOperation);
-            correctAnswer = arithmatic[questionObject.mathOperation](questionObject.lowNum,questionObject.highNum);
+            correctAnswer = arithmatic[questionObject.mathOperation](questionObject.highNum, questionObject.lowNum);
             if (correctAnswer === questionObject.userAnswer) {
-                var displayResponseHTML = `Correct: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = ${correctAnswer}`;
+                var displayResponseHTML = `Correct: ${questionObject.highNum} ${symbol} ${questionObject.lowNum} = ${correctAnswer}`;
             } else {
-                var displayResponseHTML = `Incorrect: ${questionObject.lowNum} ${symbol} ${questionObject.highNum} = ${correctAnswer}. You put ${questionObject.userAnswer}`;
+                var displayResponseHTML = `Incorrect: ${questionObject.highNum} ${symbol} ${questionObject.lowNum} = ${correctAnswer}. You put ${questionObject.userAnswer}`;
             }
             $("#response").html(displayResponseHTML);
         },
@@ -147,9 +195,9 @@ jQuery(function ($) {
             while(i--){
                 var symbol = equationObject.getMathOperationSymbol(historyObject[i].mathOperation);
                 var mathOperation = historyObject[i].mathOperation;
-                correctAnswer = arithmatic[mathOperation](historyObject[i].lowNum,historyObject[i].highNum);
+                correctAnswer = arithmatic[mathOperation](historyObject[i].highNum, historyObject[i].lowNum);
                 var isCorrect = (correctAnswer === historyObject[i].userAnswer) ? 'Correct' : 'Incorrect';
-                var oneQuestion = `${i}: ${isCorrect} - ${historyObject[i].lowNum} ${symbol} ${historyObject[i].highNum} = ${correctAnswer} ... You answered: ${historyObject[i].userAnswer}`;
+                var oneQuestion = `${i}: ${isCorrect} - ${historyObject[i].highNum} ${symbol} ${historyObject[i].lowNum}   = ${correctAnswer} ... You answered: ${historyObject[i].userAnswer}`;
                 var oneItem = $('<li></li>').text(oneQuestion);
                 $("#history").append(oneItem);
             }
