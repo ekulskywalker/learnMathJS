@@ -218,6 +218,7 @@ jQuery(function ($) {
                 handler.changeMathOperation(event.target.id);
                 $("#inputAnswer").focus();
             });
+            $("#clearHistory").on("click", handler.clearLearnMath );
         },
         submitAnswer: function(event) {
             event.preventDefault();
