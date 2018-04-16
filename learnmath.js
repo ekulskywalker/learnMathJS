@@ -14,6 +14,11 @@ jQuery(function ($) {
         getQuestionObject: function () {
             return this.questionObject;
         },
+        /**
+         *  Create the Math Equation
+         *  @param  {string}  mathOperation   type of equation generated
+         *  @return {string}  questionObject
+         */
         createQuestion: function (mathOperation) {
             var highNum, lowNum;
             var rnum1 = this.generateRandomNumber();
