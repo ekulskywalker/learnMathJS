@@ -102,8 +102,8 @@ jQuery(function ($) {
     var arithmatic = {
         /**
          *  Add the two input together
-         *  @param  {Number}  a     a
-         *  @param  {Number}  b     b
+         *  @param  {Number}  a     highNum
+         *  @param  {Number}  b     lowNum
          *  @return {Number}  Answer to adding a + b
          */
         addition: function (a, b) {
